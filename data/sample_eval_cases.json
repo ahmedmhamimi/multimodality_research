@@ -1,0 +1,62 @@
+[
+  {
+    "case_id": "C1",
+    "title": "Restaurant planning with speech clue",
+    "text": "Please help me book a cheap restaurant near the city centre and use the spoken preference too.",
+    "expected_task": "task_execution",
+    "expected_keywords": [
+      "restaurant",
+      "cheap",
+      "city centre",
+      "plan"
+    ],
+    "expected_modalities": [
+      "text",
+      "audio"
+    ]
+  },
+  {
+    "case_id": "C2",
+    "title": "Tourist attraction response",
+    "text": "Describe the attraction in detail and summarize the most relevant evidence.",
+    "expected_task": "detailed_response",
+    "expected_keywords": [
+      "attraction",
+      "detailed",
+      "evidence"
+    ],
+    "expected_modalities": [
+      "text",
+      "image"
+    ]
+  },
+  {
+    "case_id": "C3",
+    "title": "Transport domain classification",
+    "text": "Classify this request. I need a taxi from the station to the hotel.",
+    "expected_task": "classification",
+    "expected_keywords": [
+      "taxi",
+      "station",
+      "hotel"
+    ],
+    "expected_modalities": [
+      "text"
+    ]
+  },
+  {
+    "case_id": "C4",
+    "title": "Retrieval summary for hospital intent",
+    "text": "Retrieve the most relevant details for a medical visit and summarize the request.",
+    "expected_task": "retrieval_summary",
+    "expected_keywords": [
+      "medical",
+      "hospital",
+      "summary"
+    ],
+    "expected_modalities": [
+      "text",
+      "audio"
+    ]
+  }
+]

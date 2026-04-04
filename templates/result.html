@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="eyebrow">Execution result</span>
+            <h1 class="display-6 fw-bold mb-1">Multimodal task result</h1>
+            <p class="text-secondary-emphasis mb-0">Fusion method: {{ fusion_method.replace('_', ' ')|title }} | Requested task: {{ requested_task.replace('_', ' ')|title }}</p>
+        </div>
+        <a class="btn btn-outline-light" href="{{ url_for('index') }}">Run another case</a>
+    </div>
+</section>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="metric-card metric-card-large">
+            <div class="metric-label">Predicted task</div>
+            <div class="metric-value metric-value-sm">{{ result.predicted_task.replace('_', ' ')|title }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card metric-card-large">
+            <div class="metric-label">Predicted domain</div>
+            <div class="metric-value metric-value-sm">{{ result.task_result.predicted_domain|title }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card metric-card-large">
+            <div class="metric-label">Used modalities</div>
+            <div class="metric-value metric-value-sm">{{ result.task_result.used_modalities|length }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="glass-card p-4 mb-4">
+            <h2 class="h4 mb-3">Final response</h2>
+            <p class="mb-3">{{ result.task_result.response_text }}</p>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                {% for key, value in result.task_result.fusion_weights.items() %}
+                <span class="chip">{{ key }} {{ value }}</span>
+                {% endfor %}
+            </div>
+            <h3 class="h6 text-uppercase text-secondary">Action plan</h3>
+            <ul class="list-group list-group-flush list-dark mt-2">
+                {% for item in result.task_result.action_plan %}
+                <li class="list-group-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="glass-card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                <div>
+                    <h2 class="h4 mb-1">Evaluation for this same request</h2>
+                    <p class="text-secondary-emphasis mb-0">These metrics are computed from the exact input you just ran.</p>
+                </div>
+                <span class="chip">Fusion agreement {{ '%.3f'|format(result.fusion.agreement or 0) }}</span>
+            </div>
+            <div class="row g-3 mb-3">
+                {% for key, value in result.evaluation.summary.items() %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="metric-card h-100">
+                        <div class="metric-label">{{ key.replace('_', ' ')|title }}</div>
+                        <div class="metric-value metric-value-sm">{{ value }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="glass-subpanel p-3 h-100">
+                        <h3 class="h6 mb-3">Expected reference</h3>
+                        <ul class="list-group list-group-flush list-dark">
+                            <li class="list-group-item">Task: {{ result.evaluation.expected.task }}</li>
+                            <li class="list-group-item">Domain: {{ result.evaluation.expected.domain }}</li>
+                            <li class="list-group-item">Modalities: {{ result.evaluation.expected.modalities|join(', ') if result.evaluation.expected.modalities else 'not set' }}</li>
+                            <li class="list-group-item">Keywords: {{ result.evaluation.expected.keywords|join(', ') if result.evaluation.expected.keywords else 'not set' }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="glass-subpanel p-3 h-100">
+                        <h3 class="h6 mb-3">Observed output</h3>
+                        <ul class="list-group list-group-flush list-dark">
+                            <li class="list-group-item">Task: {{ result.evaluation.observed.task }}</li>
+                            <li class="list-group-item">Domain: {{ result.evaluation.observed.domain }}</li>
+                            <li class="list-group-item">Modalities: {{ result.evaluation.observed.modalities|join(', ') if result.evaluation.observed.modalities else 'not set' }}</li>
+                            <li class="list-group-item">Keywords: {{ result.evaluation.observed.keywords|join(', ') if result.evaluation.observed.keywords else 'not set' }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-subpanel p-3 mt-3">
+                <h3 class="h6 mb-3">Evaluation checks</h3>
+                <ul class="list-group list-group-flush list-dark">
+                    <li class="list-group-item">Task match: {{ result.evaluation.checks.task_match }}</li>
+                    <li class="list-group-item">Domain match: {{ result.evaluation.checks.domain_match }}</li>
+                    <li class="list-group-item">Matched keywords: {{ result.evaluation.checks.matched_keywords|join(', ') if result.evaluation.checks.matched_keywords else 'none' }}</li>
+                </ul>
+            </div>
+        </div>
+
+        {% if result.fusion.attention_matrix %}
+        <div class="glass-card p-4">
+            <h2 class="h4 mb-3">Cross-attention matrix</h2>
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle mb-0">
+                    <tbody>
+                        {% for row in result.fusion.attention_matrix %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-xl-4">
+        {% for key, modality in result.modalities.items() %}
+        <div class="glass-card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h5 mb-0 text-capitalize">{{ key }} branch</h2>
+                <span class="status-pill {{ 'status-on' if modality.available else 'status-off' }}">{{ 'available' if modality.available else 'missing' }}</span>
+            </div>
+            <p class="mb-3">{{ modality.summary }}</p>
+            <pre class="json-box mb-0">{{ modality.metadata|tojson(indent=2) }}</pre>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

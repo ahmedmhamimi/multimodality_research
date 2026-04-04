@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero-panel mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="eyebrow">Task-oriented multimodal IR</span>
+            <h1 class="display-5 fw-bold mt-2 mb-3">Run one request and get the response plus evaluation in the same page</h1>
+            <p class="lead text-secondary-emphasis mb-0">
+                The interface now keeps inference and evaluation together. Every request returns the multimodal answer, task success rate, precision, recall, F1, task time, and cross-modal relevance.
+            </p>
+        </div>
+        <div class="col-lg-5">
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Fusion methods</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">4</div>
+                    <div class="metric-label">Task modes</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Modalities</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">7</div>
+                    <div class="metric-label">Per-request metrics</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                <div>
+                    <h2 class="h4 mb-1">Run multimodal inference</h2>
+                    <p class="text-secondary-emphasis mb-0">Text is always evaluated. Image and audio are optional.</p>
+                </div>
+                <span class="chip">Evaluation is linked to this request</span>
+            </div>
+            <form action="{{ url_for('run_pipeline') }}" method="post" enctype="multipart/form-data" class="vstack gap-3">
+                <div>
+                    <label class="form-label">User text</label>
+                    <textarea class="form-control form-control-lg" name="user_text" rows="6" placeholder="Example: classify this request, describe the image, and use the spoken clue to finish the task."></textarea>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Image file</label>
+                        <input class="form-control" type="file" name="image_file" accept="image/*">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Audio file</label>
+                        <input class="form-control" type="file" name="audio_file" accept="audio/*,.wav,.mp3">
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Fusion method</label>
+                        <select class="form-select" name="fusion_method">
+                            {% for method in fusion_methods %}
+                            <option value="{{ method }}">{{ method.replace('_', ' ')|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Requested task</label>
+                        <select class="form-select" name="task_name">
+                            {% for task in task_options %}
+                            <option value="{{ task }}">{{ task.replace('_', ' ')|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="glass-subpanel p-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h3 class="h6 mb-1">Optional evaluation settings</h3>
+                            <p class="text-secondary-emphasis small mb-0">Use these fields if you want stronger precision and recall for this exact request.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Case title</label>
+                            <input class="form-control" type="text" name="case_title" placeholder="Example: Taxi classification test">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Expected task</label>
+                            <select class="form-select" name="expected_task">
+                                <option value="">Use requested task</option>
+                                {% for task in task_options if task != 'auto' %}
+                                <option value="{{ task }}">{{ task.replace('_', ' ')|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Expected domain</label>
+                            <input class="form-control" type="text" name="expected_domain" placeholder="Example: taxi">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Expected keywords</label>
+                            <input class="form-control" type="text" name="expected_keywords" placeholder="Example: taxi, station, hotel">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap pt-2">
+                    <button class="btn btn-brand btn-lg" type="submit">Run and evaluate</button>
+                    <a class="btn btn-outline-light btn-lg" href="{{ url_for('evaluation') }}">Open batch evaluation</a>
+                    <a class="btn btn-outline-light btn-lg" href="{{ url_for('methodology') }}">Read methodology</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="glass-card p-4 mb-4">
+            <h2 class="h4 mb-3">Current model status</h2>
+            <div class="timeline-simple compact-list">
+                {% for name, status in model_status.items() %}
+                <div class="timeline-item mb-0">
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <div class="timeline-title text-capitalize mb-0">{{ name }}</div>
+                        <span class="status-pill {{ 'status-on' if status.mode not in ['heuristic', 'missing'] else 'status-off' }}">{{ status.mode }}</span>
+                    </div>
+                    <p class="small text-secondary-emphasis mb-0 mt-2">{{ status.path }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="glass-card p-4 h-100">
+            <h2 class="h4 mb-3">Simplified flow</h2>
+            <div class="timeline-simple">
+                <div class="timeline-item">
+                    <div class="timeline-title">1. Read the request</div>
+                    <p class="mb-0">The app processes text first. Image and audio join only if you upload them.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">2. Fuse the modalities</div>
+                    <p class="mb-0">Concatenation, cross-attention, or late fusion creates the shared representation.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">3. Finish the task</div>
+                    <p class="mb-0">The task module returns a detailed answer, classification, retrieval summary, or simulated action.</p>
+                </div>
+                <div class="timeline-item mb-0">
+                    <div class="timeline-title">4. Evaluate the same request</div>
+                    <p class="mb-0">The result page shows task success rate, precision, recall, F1, task time, modality coverage, and fusion agreement for that exact run.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

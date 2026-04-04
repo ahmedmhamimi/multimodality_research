@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="eyebrow">Batch evaluation</span>
+            <h1 class="display-6 fw-bold mb-1">Dataset-level evaluation</h1>
+            <p class="text-secondary-emphasis mb-0">Use this page for the stored benchmark cases. Per-request evaluation appears directly on the result page.</p>
+        </div>
+        <form method="get" class="d-flex gap-2 align-items-center">
+            <select class="form-select" name="fusion_method">
+                {% for method in fusion_methods %}
+                <option value="{{ method }}" {% if report.fusion_method == method %}selected{% endif %}>{{ method.replace('_', ' ')|title }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-brand" type="submit">Refresh</button>
+        </form>
+    </div>
+</section>
+
+<div class="row g-4 mb-4">
+    {% for label, value in report.summary.items() if label != 'cases' %}
+    <div class="col-md-4 col-xl-3">
+        <div class="metric-card metric-card-large h-100">
+            <div class="metric-label">{{ label.replace('_', ' ')|title }}</div>
+            <div class="metric-value metric-value-sm">{{ value }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Case</th>
+                    <th>Expected task</th>
+                    <th>Predicted task</th>
+                    <th>Task success</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1</th>
+                    <th>Cross-modal relevance</th>
+                    <th>Modality coverage</th>
+                    <th>Task time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in report.rows %}
+                <tr>
+                    <td>{{ row.title }}</td>
+                    <td>{{ row.expected_task }}</td>
+                    <td>{{ row.predicted_task }}</td>
+                    <td>{{ row.task_success }}</td>
+                    <td>{{ row.precision }}</td>
+                    <td>{{ row.recall }}</td>
+                    <td>{{ row.f1 }}</td>
+                    <td>{{ row.cross_modal_relevance }}</td>
+                    <td>{{ row.modality_coverage }}</td>
+                    <td>{{ row.task_time_seconds }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

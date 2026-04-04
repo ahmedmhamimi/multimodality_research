@@ -1,0 +1,229 @@
+:root {
+    --bg: #081120;
+    --bg-soft: rgba(18, 28, 48, 0.72);
+    --panel: rgba(20, 32, 55, 0.86);
+    --panel-soft: rgba(12, 20, 36, 0.78);
+    --line: rgba(255, 255, 255, 0.08);
+    --text: #f3f7ff;
+    --muted: #b7c4da;
+    --brand: #6f7cff;
+    --brand-2: #2dd4bf;
+    --accent: #ff7aa2;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at top left, rgba(111, 124, 255, 0.20), transparent 28%),
+        radial-gradient(circle at top right, rgba(45, 212, 191, 0.14), transparent 25%),
+        linear-gradient(180deg, #06101d 0%, #091425 40%, #07101d 100%);
+}
+
+.app-shell {
+    min-height: 100vh;
+}
+
+.glass-nav,
+.glass-card,
+.hero-panel,
+.metric-card,
+.glass-subpanel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(18px);
+}
+
+.glass-nav {
+    margin: 1rem auto 0;
+    border-radius: 20px;
+    max-width: calc(100% - 2rem);
+}
+
+.hero-panel {
+    border-radius: 28px;
+    padding: 2rem;
+}
+
+.glass-card {
+    border-radius: 24px;
+}
+
+.glass-subpanel {
+    border-radius: 18px;
+    background: var(--panel-soft);
+}
+
+.eyebrow {
+    display: inline-flex;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(111, 124, 255, 0.18);
+    border: 1px solid rgba(111, 124, 255, 0.25);
+    color: #d7dcff;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.metric-card {
+    border-radius: 22px;
+    padding: 1.25rem;
+}
+
+.metric-card-large {
+    min-height: 128px;
+}
+
+.metric-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value-sm {
+    font-size: 1.25rem;
+    line-height: 1.3;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.btn-brand {
+    background: linear-gradient(135deg, var(--brand), #8993ff);
+    border: 0;
+    color: white;
+    box-shadow: 0 10px 30px rgba(111, 124, 255, 0.35);
+}
+
+.btn-brand:hover {
+    color: white;
+    filter: brightness(1.05);
+}
+
+.form-control,
+.form-select {
+    background: rgba(6, 11, 21, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: white;
+    border-radius: 16px;
+    padding: 0.95rem 1rem;
+}
+
+.form-control::placeholder {
+    color: rgba(183, 196, 218, 0.8);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: rgba(6, 11, 21, 0.85);
+    color: white;
+    border-color: rgba(111, 124, 255, 0.7);
+    box-shadow: 0 0 0 0.2rem rgba(111, 124, 255, 0.15);
+}
+
+.timeline-simple {
+    display: grid;
+    gap: 1rem;
+}
+
+.timeline-item {
+    padding: 1rem 1rem 1rem 1.1rem;
+    border-radius: 18px;
+    background: rgba(8, 14, 26, 0.52);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.timeline-title {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.status-pill {
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-on {
+    background: rgba(45, 212, 191, 0.16);
+    color: #9df3e6;
+}
+
+.status-off {
+    background: rgba(255, 122, 162, 0.16);
+    color: #ffc4d4;
+}
+
+.chip {
+    display: inline-flex;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text);
+}
+
+.json-box,
+.markdown-box {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: rgba(6, 11, 21, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1rem;
+    color: #d6e1f5;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(255,255,255,0.03);
+    --bs-table-hover-bg: rgba(111,124,255,0.10);
+    border-color: rgba(255,255,255,0.08);
+}
+
+.list-dark .list-group-item {
+    background: transparent;
+    color: var(--text);
+    border-color: rgba(255,255,255,0.08);
+}
+
+.compact-list .timeline-item {
+    padding: 0.9rem 1rem;
+}
+
+.text-secondary-emphasis {
+    color: var(--muted) !important;
+}
+
+.small {
+    font-size: 0.88rem;
+}
+
+@media (max-width: 991px) {
+    .hero-panel {
+        padding: 1.5rem;
+    }
+
+    .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
